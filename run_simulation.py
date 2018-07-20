@@ -93,12 +93,12 @@ def generate_LFP_for_single_neuron(electrode, cell_name, params):
     neuron.h.load_file('import3d.hoc')
 
     #Loading the neuron models of interest
-    neuron_model = 'home/baran/Desktop/neuron_models/'+cell_name
+    neuron_model = '/home/baran/Desktop/neuron_models/'+cell_name
 
 
     load_mechanisms_from_neuron_model(cell_name)
     templatename = load_cell_properties(cell_name)
-    os.chdir(cwd + neuron_model)
+    os.chdir( neuron_model)
     morphologyfile = glob(os.path.join('morphology', '*'))[0]
     add_synapses = False
 
