@@ -25,7 +25,7 @@ def get_templatename(f):
     return templatename
 
 def load_mechanisms_from_neuron_model(cell_name):
-    neuron_model = 'neuron_models/'+cell_name
+    neuron_model = '/home/baran/Desktop/neuron_models/'+cell_name
     cwd = os.getcwd()
     mechanisms_folder = neuron_model + '/mechanisms'
     os.chdir(mechanisms_folder)
@@ -34,7 +34,7 @@ def load_mechanisms_from_neuron_model(cell_name):
     neuron.load_mechanisms(mechanisms_folder)
 
 def load_cell_properties(cell_name):
-    neuron_model = 'neuron_models/' + cell_name
+    neuron_model = '/home/baran/Desktop/neuron_models/' + cell_name
     os.chdir(neuron_model)
 
     #get the template name
@@ -93,7 +93,7 @@ def generate_LFP_for_single_neuron(electrode, cell_name, params):
     neuron.h.load_file('import3d.hoc')
 
     #Loading the neuron models of interest
-    neuron_model = '/neuron_models/'+cell_name
+    neuron_model = 'home/baran/Desktop/neuron_models/'+cell_name
 
 
     load_mechanisms_from_neuron_model(cell_name)
