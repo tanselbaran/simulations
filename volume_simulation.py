@@ -71,7 +71,7 @@ def generate_volume_simulation(density, firing_rate, dimensions, dx, time, spike
 
     spike_trains = np.zeros((len(neuron_coords), len(time)))
     for neuron in tqdm(range(len(neuron_coords))):
-        if np.random.rand < active:
+        if np.random.rand(1) < active:
             spike_trains[neuron] = generate_spike_train(time, firing_rate)
             neuron_field = generate_volume_field_per_neuron(spike_trains[neuron], spike_lfp)
             volume_lfp = add_neuron_lfps_to_volume(neuron_field, neuron_coords[neuron], volume_inds, volume_lfp)
