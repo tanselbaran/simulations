@@ -16,7 +16,7 @@ def plot_morphology_3d(cell):
             color = 'b'
         elif "axon" in cell.allsecnames[i]:
             color = 'k'
-    plt.plot(cell.x3d[i], cell.y3d[i], cell.z3d[i], color)
+        plt.plot(cell.x3d[i], cell.y3d[i], cell.z3d[i], color)
     plt.show()
 
 def plot_morphology_2d_crossection(cell, axes, *args):
