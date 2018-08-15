@@ -97,7 +97,8 @@ def generate_volume_simulation(exc_density, inh_density, firing_rate, dimensions
     #Simulating fields of excitatory neurons
     for neuron in tqdm(range(len(exc_neuron_coords))):
         if np.random.rand(1) < active:
-            exc_spike_trains[neuron] = generate_spike_train(time, exc_firing_rate)
+            exc_spike_trains[neuron] = generate_spike_train(time, firing_rate)
+            exc_spike_trains[neuron] = remove_isi_violations(exc_spike_trains[neuron], 64)
             neuron_field = generate_volume_field_per_neuron(exc_spike_trains[neuron], exc_spike_lfp)
             volume_lfp = add_neuron_lfps_to_volume(neuron_field, exc_neuron_coords[neuron], volume_inds, volume_lfp)
             neuron_field = []
