@@ -84,6 +84,7 @@ def remove_isi_violations(spike_trains, refractory_period):
         isi_violations = np.where(np.diff(spike_times) < refractory_period)[0] + 1
         spike_trains[cell,spike_times[isi_violations]] = 0
 
+    return spike_trains
 
 def generate_volume_simulation(exc_density, inh_density, firing_rate, dimensions, dx, time, exc_spike_lfp, inh_spike_lfp, active, connectivity):
     volume_inds = generate_volume_inds(dimensions,dx)
@@ -97,8 +98,9 @@ def generate_volume_simulation(exc_density, inh_density, firing_rate, dimensions
     #Simulating fields of excitatory neurons
     for neuron in tqdm(range(len(exc_neuron_coords))):
         if np.random.rand(1) < active:
-            exc_spike_trains[neuron] = generate_spike_train(time, firing_rate)
-            exc_spike_trains[neuron] = remove_isi_violations(exc_spike_trains[neuron], 64)
+            exc_spike_train = np.reshape(generate_spike_train(time, firing_rate), (1,len(time)))
+            exc_spike_trains[neuron] = remove_isi_violations(exc_spike_train, 64)
+            exc_spike_trains[neuron] = exc_spike_train[0]
             neuron_field = generate_volume_field_per_neuron(exc_spike_trains[neuron], exc_spike_lfp)
             volume_lfp = add_neuron_lfps_to_volume(neuron_field, exc_neuron_coords[neuron], volume_inds, volume_lfp)
             neuron_field = []
