@@ -65,17 +65,44 @@ def add_neuron_lfps_to_volume(neuron_field, neuron_coords, volume_inds, volume_l
 
     return volume_lfp
 
+def get_projection_matrix(num_neurons_1, num_neurons_2, connectivity):
+    projection_matrix = np.zeros((num_neurons_1, num_neurons_2))
+    for neuron in range(num_neurons_1):
+        rand_sequence = np.random.rand(num_neurons_2)
+        projection_matrix[neuron,np.where(rand_sequence<connectivity)[0]] = 1
+    return projection_matrix
+
+def remove_isi_violations(spike_trains, refractory_period):
+    for cell in range(len(spike_trains)):
+        spike_times = np.where(spike_trains[cell] == 1)[0]
+        isi_violations = np.where(np.diff(spike_times) < refractory_period)[0] + 1
+        spike_trains[cell,spike_times[isi_violations]] = 0
+
+
 def generate_volume_simulation(exc_density, inh_density, firing_rate, dimensions, dx, time, spike_lfp, active):
     exc_neuron_coords, exc_volume_inds = generate_neurons_in_volume(exc_density, dimensions, dx)
     inh_neuron_coords, inh_volume_inds = generate_neurons_in_volume(inh_density, dimensions, dx)
     volume_lfp = np.zeros((len(volume_inds['x']), len(volume_inds['y']), len(volume_inds['z']), len(time)))
 
-    spike_trains = np.zeros((len(neuron_coords), len(time)))
-    for neuron in tqdm(range(len(neuron_coords))):
+    exc_spike_trains = np.zeros((len(exc_neuron_coords), len(time)))
+    exc_to_inh_projections = get_projection_matrix(len(inh_neuron_coords), len(exc_neuron_coords), connectivity)
+
+    #Simulating fields of excitatory neurons
+    for neuron in tqdm(range(len(exc_neuron_coords))):
         if np.random.rand(1) < active:
-            spike_trains[neuron] = generate_spike_train(time, firing_rate)
-            neuron_field = generate_volume_field_per_neuron(spike_trains[neuron], spike_lfp)
-            volume_lfp = add_neuron_lfps_to_volume(neuron_field, neuron_coords[neuron], volume_inds, volume_lfp)
+            exc_spike_trains[neuron] = generate_spike_train(time, exc_firing_rate)
+            neuron_field = generate_volume_field_per_neuron(exc_spike_trains[neuron], exc_spike_lfp)
+            volume_lfp = add_neuron_lfps_to_volume(neuron_field, exc_neuron_coords[neuron], exc_volume_inds, volume_lfp)
             neuron_field = []
+
+    #Simulating fields of inhibitory num_neurons
+    inh_spike_trains = np.matmul(exc_to_inh_connectivity, exc_spike_trains)
+    inh_spike_trains[np.where(inh_spike_trains > 1)[0]] = 1
+    inh_spike_trains = remove_isi_violations(inh_spike_trains, 64)
+
+    for neuron in tqdm(range(len(inh_neuron_coords))):
+        neuron_field = generate_volume_field_per_neuron(inh_spike_trains[neuron], inh_spike_lfp)
+        volume_lfp = add_neuron_lfps_to_volume(neuron_field, inh_neuron_coords[neuron], inh_volume_inds, volume_lfp)
+        neuron_field = []
 
     return volume_lfp
