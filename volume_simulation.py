@@ -21,12 +21,16 @@ def generate_volume_field_per_neuron(spike_train, spike_lfp):
 
     return field_in_time
 
-def generate_neurons_in_volume(density, dimensions, dx):
+def generate_volume_inds(dimensions, dx):
     x = np.arange(dimensions[0][0], dimensions[0][1], dx)
     y = np.arange(dimensions[1][0], dimensions[1][1], dx)
     z = np.arange(dimensions[2][0], dimensions[2][1], dx)
 
     volume_inds = {'x': x, 'y': y, 'z': z}
+    return volume_inds
+
+def generate_neurons_in_volume(density, dimensions, dx):
+    volume_inds = generate_volume_inds(dimensions,dx)
     volume = (x[-1] - x[0]) * (y[-1] - y[0]) * (z[-1] - z[0])
     num_neurons = int(density * volume)
 
@@ -37,7 +41,7 @@ def generate_neurons_in_volume(density, dimensions, dx):
         neuron_coords[neuron,1] = int(np.random.rand(1) * len(y))
         neuron_coords[neuron,2] = int(np.random.rand(1) * len(z))
 
-    return neuron_coords, volume_inds
+    return neuron_coords
 
 def get_volume_bounds_and_neuron_lfp_bounds(neuron_coords, neuron_field, volume_lfp):
     volume_bounds = np.zeros((3,2))
