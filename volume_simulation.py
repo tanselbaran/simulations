@@ -65,8 +65,9 @@ def add_neuron_lfps_to_volume(neuron_field, neuron_coords, volume_inds, volume_l
 
     return volume_lfp
 
-def generate_volume_simulation(density, firing_rate, dimensions, dx, time, spike_lfp, active):
-    neuron_coords, volume_inds = generate_neurons_in_volume(density, dimensions, dx)
+def generate_volume_simulation(exc_density, inh_density, firing_rate, dimensions, dx, time, spike_lfp, active):
+    exc_neuron_coords, exc_volume_inds = generate_neurons_in_volume(exc_density, dimensions, dx)
+    inh_neuron_coords, inh_volume_inds = generate_neurons_in_volume(inh_density, dimensions, dx)
     volume_lfp = np.zeros((len(volume_inds['x']), len(volume_inds['y']), len(volume_inds['z']), len(time)))
 
     spike_trains = np.zeros((len(neuron_coords), len(time)))
