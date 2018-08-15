@@ -79,7 +79,7 @@ def remove_isi_violations(spike_trains, refractory_period):
         spike_trains[cell,spike_times[isi_violations]] = 0
 
 
-def generate_volume_simulation(exc_density, inh_density, firing_rate, dimensions, dx, time, spike_lfp, active):
+def generate_volume_simulation(exc_density, inh_density, firing_rate, dimensions, dx, time, exc_spike_lfp, inh_spike_lfp, active):
     exc_neuron_coords, exc_volume_inds = generate_neurons_in_volume(exc_density, dimensions, dx)
     inh_neuron_coords, inh_volume_inds = generate_neurons_in_volume(inh_density, dimensions, dx)
     volume_lfp = np.zeros((len(volume_inds['x']), len(volume_inds['y']), len(volume_inds['z']), len(time)))
